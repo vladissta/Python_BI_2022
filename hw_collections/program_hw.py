@@ -1,5 +1,8 @@
-d_complement = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G',
+d_complement_dna = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G',
                 'a': 't', 't': 'a', 'g': 'c', 'c': 'g'}
+
+d_complement_rna = {'A': 'U', 'U': 'A', 'G': 'C', 'C': 'G',
+                'a': 'u', 'u': 'a', 'g': 'c', 'c': 'g'}
 
 d_transcription = {'A': 'A', 'T': 'U', 'G': 'G', 'C': 'C',
                    'a': 'a', 't': 'u', 'g': 'g', 'c': 'c'}
@@ -17,7 +20,7 @@ def seq_inp_check(sequence):
     for i in sequence:
         if i.lower() not in ['a', 'c', 't', 'g', 'u']:
             return 'wrong alph'
-    if sequence.lower().find('a') != -1 and sequence.lower().find('u') != -1:
+    if sequence.lower().find('t') != -1 and sequence.lower().find('u') != -1:
         return 'rna and dna'
     else:
         return 'ok'
@@ -35,26 +38,37 @@ def execution(cmd):
             print("There are T and U in your sequence.")
 
 
+def transcribe(sequence):
+    newseq = ''
+    while True:
+        if sequence.lower().find('u') != -1:
+            print("I can't transcribe RNA sequence. Try Again!")
+            sequence = input('Enter sequence: ')
+            continue
+        else:
+            for i in sequence:
+                newseq += d_transcription[i]
+            break
+    return newseq
+
+
 def reverse(sequence):
     return sequence[::-1]
 
 
 def complement(sequence):
     newseq = ''
-    for i in sequence:
-        newseq += d_complement[i]
+    if sequence.lower().find('t') != -1:
+        for i in sequence:
+            newseq += d_complement_dna[i]
+    else:
+        for i in sequence:
+            newseq += d_complement_rna[i]
     return newseq
 
 
 def reverse_complement(sequence):
     return reverse(complement(sequence))
-
-
-def transcribe(sequence):
-    newseq = ''
-    for i in sequence:
-        newseq += d_transcription[i]
-    return newseq
 
 
 print(f'List of commands: {commands}')
