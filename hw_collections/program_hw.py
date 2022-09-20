@@ -94,7 +94,4 @@ while True:
         execution(reverse_complement)
 
     else:
-        print('''\nTry to print command correctly!
-        
-List of commands: ''',
-              commands)
+        print('''\nTry to print command correctly!\n\nList of commands: ''', commands)
