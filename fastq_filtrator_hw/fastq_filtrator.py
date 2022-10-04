@@ -1,8 +1,7 @@
 def making_list(file):
     ls = []
     for line in file:
-        x = []
-        x.append(line.strip())
+        x = [line.strip()]
         for i in range(3):
             x.append(file.readline().strip())
         ls.append(x)
@@ -16,7 +15,7 @@ def making_dict(ls):
     return d
 
 
-def filter_len(listd, length_bounds):  #####!!!!!length bounds!!!!
+def filter_len(listd, length_bounds):
     filtered = []
     for i in listd:
         if len(i['seq']) in range(length_bounds[0], length_bounds[1] + 1):
@@ -24,7 +23,7 @@ def filter_len(listd, length_bounds):  #####!!!!!length bounds!!!!
     return filtered
 
 
-def filter_gc_percentage(listd, gc_bounds):  #####!!!!!gc bounds!!!!
+def filter_gc_percentage(listd, gc_bounds):
     filtered = []
     for i in listd:
         c = 0
@@ -32,12 +31,16 @@ def filter_gc_percentage(listd, gc_bounds):  #####!!!!!gc bounds!!!!
             if j.upper() in ["G", "C"]:
                 c += 1
         prc = (c / len(i['seq'])) * 100
-        if gc_bounds[0] < prc < gc_bounds[1] + 1:
-            filtered.append(i)
+        if len(gc_bounds) == 2:
+            if gc_bounds[0] < prc < gc_bounds[1]:
+                filtered.append(i)
+        else:
+            if prc < gc_bounds:
+                filtered.append(i)
     return filtered
 
 
-def filter_mean_quality(listd, qual_threshold):  #####!!!!!quality threshold!!!!
+def filter_mean_quality(listd, qual_threshold):
     filtered = []
     for i in listd:
         s = 0
@@ -64,7 +67,7 @@ def file_writing(filtered, failed, save_filt, prefix):
 
 def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
          length_bounds=(0, 2 ** 32), quality_threshold=0, save_filtered=True):
-    with open(input_fastq) as file:  ####filename as var
+    with open(input_fastq) as file:
 
         ls = making_list(file)
         dlist = making_dict(ls)
@@ -80,5 +83,3 @@ def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
 
         file_writing(quality_filtered, failed,
                      save_filtered, output_file_prefix)
-
-
