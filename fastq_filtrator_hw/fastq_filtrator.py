@@ -60,7 +60,7 @@ def filter_gc_percentage(dicts, gc_bounds):
             if j.upper() in ["G", "C"]:
                 c += 1
         prc = (c / len(i['seq'])) * 100
-        if len(gc_bounds) == 2:
+        if type(gc_bounds) is list or type(gc_bounds) is tuple:
             if gc_bounds[0] <= prc <= gc_bounds[1]:
                 filtered.append(i)
         else:
@@ -82,7 +82,7 @@ def filter_mean_quality(dicts, qual_threshold):
     for i in dicts:
         s = 0
         for j in i['quality']:
-            s += ord(j)
+            s += ord(j) - 33
         mean = s / len(i['quality'])
         if mean >= qual_threshold:
             filtered.append(i)
