@@ -167,6 +167,3 @@ def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
 
         if save_filtered:
             file_writing_failed(failed_dicts, output_file_prefix)
-
-
-main('test.fastq', 'lol', quality_threshold=30, save_filtered=True)
