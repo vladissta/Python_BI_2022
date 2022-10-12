@@ -37,9 +37,9 @@ def filter_len(dicts, length_bounds):
     :return: список словарей прошедший фильтрацию по длине прочтений
     """
     filtered = []
-    for i in dicts:
-        if length_bounds[0] <= len(i['seq']) <= length_bounds[1]:
-            filtered.append(i)
+    for d in dicts:
+        if length_bounds[0] <= len(d['seq']) <= length_bounds[1]:
+            filtered.append(d)
     return filtered
 
 
@@ -54,18 +54,16 @@ def filter_gc_percentage(dicts, gc_bounds):
     :return: список словарей прошедший фильтрацию по GC-составу
     """
     filtered = []
-    for i in dicts:
-        c = 0
-        for j in i['seq']:
-            if j.upper() in ["G", "C"]:
-                c += 1
-        prc = (c / len(i['seq'])) * 100
+    for d in dicts:
+        gs = d['seq'].upper().count('G')
+        cs = d['seq'].upper().count('C')
+        prc = ((gs + cs) / len(d['seq'])) * 100
         if type(gc_bounds) is list or type(gc_bounds) is tuple:
             if gc_bounds[0] <= prc <= gc_bounds[1]:
-                filtered.append(i)
+                filtered.append(d)
         else:
             if prc <= gc_bounds:
-                filtered.append(i)
+                filtered.append(d)
     return filtered
 
 
@@ -80,13 +78,11 @@ def filter_mean_quality(dicts, qual_threshold):
     :return: список словарей отфильтрованный по среднему качеству прочтений
     """
     filtered = []
-    for i in dicts:
-        s = 0
-        for j in i['quality']:
-            s += ord(j) - 33
-        mean = s / len(i['quality'])
+    for d in dicts:
+        qualities = [ord(i) - 33 for i in d['quality']]
+        mean = sum(qualities) / len(qualities)
         if mean >= qual_threshold:
-            filtered.append(i)
+            filtered.append(d)
     return filtered
 
 
@@ -105,15 +101,11 @@ def failed_filter(full_dicts, filtered_dicts):
     return failed_dicts
 
 
-def file_writing(filtered_dicts, failed_dicts, save_filtered, prefix):
+def file_writing_passed(filtered_dicts, prefix):
     """
     Создание файлов с прочтениями прошедшими фильтрацию. Название {prefix}_passed.fastq.
-    Создание файлов с прочтениями не прошедшими фильтрацию. Название {prefix}_failed.fastq (запись происходит только
-    при значении параметра save_filtered=True)
 
-    :param filtered_dicts: список словарей с прочтениями прошедшими фильтрацию
-    :param failed_dicts: список словарей с прочтениями не прошедшими фильтрацию
-    :param save_filtered: параметр, указывающий нужно ли сохранять отдельным файлом прочтения не прошедшие фильтрацию
+    :param filtered_dicts: список словарей с прочтениями прошедшими фильтраци
     :param prefix: префикс в начале названия файла
     :return: None
     """
@@ -122,15 +114,25 @@ def file_writing(filtered_dicts, failed_dicts, save_filtered, prefix):
             for j in i.values():
                 print(j, file=f)
 
-    if save_filtered:
-        with open(f'{prefix}_failed.fastq', 'w') as f:
-            for i in failed_dicts:
-                for j in i.values():
-                    print(j, file=f)
+
+def file_writing_failed(failed_dicts, prefix):
+    """
+    Создание файлов с прочтениями не прошедшими фильтрацию. Название {prefix}_failed.fastq (запись происходит только
+    при значении параметра save_filtered=True)
+
+    :param failed_dicts: список словарей с прочтениями не прошедшими фильтрацию
+    :param save_filtered: параметр, указывающий нужно ли сохранять отдельным файлом прочтения не прошедшие фильтрацию
+    :param prefix:  префикс в начале названия файла
+    :return: None
+    """
+    with open(f'{prefix}_failed.fastq', 'w') as f:
+        for i in failed_dicts:
+            for j in i.values():
+                print(j, file=f)
 
 
 def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
-         length_bounds=(0, 2 ** 32), quality_threshold=0, save_filtered=True):
+         length_bounds=(0, 2 ** 32), quality_threshold=0, save_filtered=False):
     """
     Функция, в которой происходит вся фильтрация и запись файлов.
 
@@ -161,4 +163,10 @@ def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
         failed_dicts = failed_filter(full_dicts, final_filtered_dicts)
 
         # запись файлов
-        file_writing(final_filtered_dicts, failed_dicts, save_filtered, output_file_prefix)
+        file_writing_passed(final_filtered_dicts, output_file_prefix)
+
+        if save_filtered:
+            file_writing_failed(failed_dicts, output_file_prefix)
+
+
+main('test.fastq', 'lol', quality_threshold=30, save_filtered=True)
