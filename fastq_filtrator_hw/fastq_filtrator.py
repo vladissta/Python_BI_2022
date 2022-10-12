@@ -1,30 +1,18 @@
-def making_list(file):
-    """
-    Создание из файла списка из строк этого файла для дальнейшего использования
-
-    :param file: файл .fastq
-    :return: список из строк файла
-    """
-    full_list = []
-    for line in file:
-        x = [line.strip()]
-        for i in range(3):
-            x.append(file.readline().strip())
-        full_list.append(x)
-    return full_list
-
-
-def making_dicts(full_list):
+def making_dict(file):
     """
     Создание списка словарей с 4 элементами соответсвуюшим строчкам одного прочтения
 
-    :param full_list: список из строк файла полученный из функции making_list
+    :param file: файл .fastq
     :return: список из словарей
     """
-    d = []
-    for i in full_list:
-        d.append({'name': i[0], 'seq': i[1], 'plus': i[2], 'quality': i[3]})
-    return d
+    full_list = []
+    for line in file:
+        full_list.append({
+            'name': line.strip(),
+            'seq': file.readline().strip(),
+            'plus': file.readline().strip(),
+            'quality': file.readline().strip()})
+    return full_list
 
 
 def filter_len(dicts, length_bounds):
@@ -103,7 +91,8 @@ def failed_filter(full_dicts, filtered_dicts):
 
 def file_writing_passed(filtered_dicts, prefix):
     """
-    Создание файлов с прочтениями прошедшими фильтрацию. Название {prefix}_passed.fastq.
+    Создание файлов с прочтениями прошедшими фильтрацию.
+    Название {prefix}_passed.fastq.
 
     :param filtered_dicts: список словарей с прочтениями прошедшими фильтраци
     :param prefix: префикс в начале названия файла
@@ -117,13 +106,13 @@ def file_writing_passed(filtered_dicts, prefix):
 
 def file_writing_failed(failed_dicts, prefix):
     """
-    Создание файлов с прочтениями не прошедшими фильтрацию. Название {prefix}_failed.fastq (запись происходит только
-    при значении параметра save_filtered=True)
+    Создание файлов с прочтениями не прошедшими фильтрацию.
+    Название {prefix}_failed.fastq
+    (запись происходит только при значении параметра save_filtered=True)
 
     :param failed_dicts: список словарей с прочтениями не прошедшими фильтрацию
-    :param save_filtered: параметр, указывающий нужно ли сохранять отдельным файлом прочтения не прошедшие фильтрацию
-    :param prefix:  префикс в начале названия файла
-    :return: None
+    :param prefix: префикс в начале названия файла
+    :return None
     """
     with open(f'{prefix}_failed.fastq', 'w') as f:
         for i in failed_dicts:
@@ -147,8 +136,7 @@ def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
     """
 
     with open(input_fastq) as file:
-        full_list = making_list(file)  # создание из fastq файла списка для использования далее
-        full_dicts = making_dicts(full_list)  # список словарей с 4 элементами соответсвуюшим строчкам одного прочтения
+        full_dicts = making_dict(file)  # список словарей с 4 элементами соответсвуюшим строчкам одного прочтения
 
         # фильтрация по длине прочтений
         len_filtered_dicts = filter_len(full_dicts, length_bounds)
