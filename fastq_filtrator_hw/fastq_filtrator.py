@@ -46,7 +46,7 @@ def filter_gc_percentage(dicts, gc_bounds):
         gs = d['seq'].upper().count('G')
         cs = d['seq'].upper().count('C')
         prc = ((gs + cs) / len(d['seq'])) * 100
-        if type(gc_bounds) is list or type(gc_bounds) is tuple:
+        if isinstance(gc_bounds, (list, tuple)):
             if gc_bounds[0] <= prc <= gc_bounds[1]:
                 filtered.append(d)
         else:
