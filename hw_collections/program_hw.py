@@ -1,15 +1,14 @@
 # Словарь с комплиментраными нуклеотидами для ДНК
 d_complement_dna = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G',
-                'a': 't', 't': 'a', 'g': 'c', 'c': 'g'}
+                    'a': 't', 't': 'a', 'g': 'c', 'c': 'g'}
 
 # Словарь с комплиментраными нуклеотидами для РНК
 d_complement_rna = {'A': 'U', 'U': 'A', 'G': 'C', 'C': 'G',
-                'a': 'u', 'u': 'a', 'g': 'c', 'c': 'g'}
+                    'a': 'u', 'u': 'a', 'g': 'c', 'c': 'g'}
 
 # Словарь для транскрипции (А превращает в Т)
 d_transcription = {'A': 'A', 'T': 'U', 'G': 'G', 'C': 'C',
                    'a': 'a', 't': 'u', 'g': 'g', 'c': 'c'}
-
 # Список команд
 commands = '''
 exit — завершение исполнения программы
@@ -20,24 +19,40 @@ reverse complement — напечатать обратную комплемен�
 '''
 
 
-def seq_inp_check(sequence):
+def rna_dna_check(sequence):
     """
     Функция, проверяющая корректность введенной последовательности
-    нуклеотидов: чтобы это были именно нуклеотиды и в одной
-    последовательности не было тимина и урацила.
-    В зависимости от результата возвращает строчку, которую
-    обработает функция execution
+    нуклеотидов: чтобы в последовательности не было тимина и урацила
 
     :param sequence: последовательность нуклеотидов
-    :return: строка, которую далее принимает функция execution
+    :return: True/False
     """
-    for i in sequence:
-        if i.lower() not in ['a', 'c', 't', 'g', 'u']:
-            return 'wrong alph'
-    if sequence.lower().find('t') != -1 and sequence.lower().find('u') != -1:
-        return 'rna and dna'
-    else:
-        return 'ok'
+    if {'u', 't'}.issubset(set(sequence.lower())):
+        return False
+    return True
+
+
+def alphabet_check(sequence):
+    """
+    Функция, проверяющая корректность введенной последовательности
+    нуклеотидов: чтобы это были именно нуклеотиды
+
+    :param sequence: последовательность нуклеотидов
+    :return: True/False
+    """
+    if not set(sequence.lower()).issubset({'a', 'c', 't', 'g', 'u'}):
+        return False
+    return True
+
+
+def rna_check(sequence):
+    seq = sequence
+    while True:
+        if 'u' in set(seq.lower()):
+            print('I cannot transcribe RNA sequence')
+            seq = input('Enter sequence: ')
+        else:
+            break
 
 
 def execution(cmd):
@@ -54,13 +69,13 @@ def execution(cmd):
     """
     while True:
         seq = input('Enter sequence: ')
-        if seq_inp_check(seq) == 'ok':
+        if not alphabet_check(seq):
+            print("Invalid Alphabet! Try Again.")
+        elif not rna_dna_check(seq):
+            print("There are T and U in your sequence.")
+        else:
             print(cmd(seq))
             break
-        elif seq_inp_check(seq) == 'wrong alph':
-            print("Invalid Alphabet! Try Again.")
-        elif seq_inp_check(seq) == 'rna and dna':
-            print("There are T and U in your sequence.")
 
 
 def transcribe(sequence):
@@ -73,17 +88,7 @@ def transcribe(sequence):
     :return: транскрибированную последовательность ДНК или
     сообщение об ошибке
     """
-    newseq = ''
-    while True:
-        if sequence.lower().find('u') != -1:
-            print("I can't transcribe RNA sequence. Try Again!")
-            sequence = input('Enter sequence: ')
-            continue
-        else:
-            for i in sequence:
-                newseq += d_transcription[i]
-            break
-    return newseq
+    return ''.join([d_transcription[nucl] for nucl in sequence])
 
 
 def reverse(sequence):
@@ -126,6 +131,7 @@ def reverse_complement(sequence):
     :return:
     """
     return reverse(complement(sequence))
+
 
 # Выводит в начале список команд для пользователя
 print(f'List of commands: {commands}')
