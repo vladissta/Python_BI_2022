@@ -1,8 +1,14 @@
-# Pain launching guide
+# Pain launching guide on macOS
 
 This guide will help you to install and launch script `pain.py`
 
-**All commands below should be run in terminal**
+**All commands below should be run in Terminal**  
+To open Terminal on macOS you can follow one of instructions below:
+ - Open Launchpad from your Dock with the keyboard shortcut F4, or tap the six-square-icon button on the Touch Bar.  
+Find the **Utilities** folder and click it. Choose Terminal.  
+ - In the Finder: open the **Applications** folder  
+Usually you can find the icon of the folder on the left in the Finder window.  
+Find in **Applications** folder **Utilities** and open it. Then click on Terminal there.
 
 ## Recommended software
 
@@ -12,7 +18,7 @@ Python version: ≤ 3.10
 ## Install Python
 
 To launch the script you should have **Python of version 3.10 or higher**.
-Check current version of python on your computer by running the command in terminal:
+Check current version of python on your computer by running the command:
 
 ```commandline
 python --version
@@ -39,21 +45,21 @@ To download script and required for installation files run the commands:
 ### Problem with auto-activation of conda virtual environment
 
 Initially, we recommend to check if you work in some virtual environment by default
-Sometimes when you launch a terminal, it _automatically activates_ virtual environment  
+Sometimes when you launch a Terminal, it _automatically activates_ virtual environment  
 It often happens if you earlier worked with such package manager as **conda**.
 
-When you launch the terminal this situation often looks like this:
+When you launch the Terminal this situation often looks like this:
 > (base) Name_of_machine:~ username$
 
 The word `base` in brackets means you work in virtual environment named _base_
 
-To turn off automatic activation of virtual environment in conda you can open terminal and run the following command
+To turn off automatic activation of virtual environment in conda you can run the following command
 
 ```commandline
 conda config --set auto_activate_base false
 ```
 
-Then you can relaunch terminal or run the following command to deactivate conda virtual environment:
+Then you can relaunch Terminal or run the following command to deactivate conda virtual environment:
 
 ```commandline
 conda deactivate
@@ -63,7 +69,7 @@ conda deactivate
 
 You can create virtual environment right in the directory with script or in another directory.    
 To create virtual environment named _venv_ in current directory (with script)   
-using the _venv_ module in Python run in the terminal:
+using the _venv_ module in Python run:
 
 ```commandline
 python -m venv venv
