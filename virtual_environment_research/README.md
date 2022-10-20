@@ -42,34 +42,8 @@ To download script and required for installation files run the commands:
 
 **After downloading, it would be better to create new virtual environment, where you will work with script.**
 
-### Problem with auto-activation of conda virtual environment
-
-Initially, we recommend to check if you work in some virtual environment by default
-Sometimes when you launch a Terminal, it _automatically activates_ virtual environment  
-It often happens if you earlier worked with such package manager as **conda**.
-
-When you launch the Terminal this situation often looks like this:
-> (base) Name_of_machine:~ username$
-
-The word `base` in brackets means you work in virtual environment named _base_
-
-To turn off automatic activation of virtual environment in conda you can run the following command
-
-```commandline
-conda config --set auto_activate_base false
-```
-
-Then you can relaunch Terminal or run the following command to deactivate conda virtual environment:
-
-```commandline
-conda deactivate
-```
-
-### Creating new virtual environment
-
 You can create virtual environment right in the directory with script or in another directory.    
-To create virtual environment named _venv_ in current directory (with script)   
-using the _venv_ module in Python run:
+To create virtual environment named _venv_ in current directory (with script) using the _venv_ module in Python run:
 
 ```commandline
 python -m venv venv
@@ -125,7 +99,7 @@ deactivate
 cd path/Virtual_environment_research
 ```
 
-Where `path` is directory where you downloaded files
+Where `path` is directory where you downloaded files including the script
 
 ### 2) Activate virtual environment
     
