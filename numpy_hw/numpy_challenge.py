@@ -14,7 +14,7 @@ def multiply_matrices(*args):
 
 
 def compute_2d_distance(a, b):
-    return np.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
+    return np.sqrt(((a - b) ** 2).sum())
 
 
 def compute_multidimensional_distance():
@@ -28,16 +28,13 @@ def compute_pair_distances():
 if __name__ == '__main__':
     arr1 = np.array([1, 2, 3, 4, 5, 6])
     arr2 = np.arange(1, 7)
-    arr3 = np.ones(6) + np.arange(0, 6)
-    arr3 = arr3.astype('int')
+    arr3 = (np.ones(6) + np.arange(0, 6)).astype('int')  # убери
 
     a = arr1.reshape(2, 3)
     b = arr1.reshape(3, 2)
     c = np.arange(1, 3)
-    v1 = np.array([1, 0])
-    v2 = np.array([-1, 0])
-
-    print(c)
+    v1 = np.array([1, 1])
+    v2 = np.array([0, 0])
 
     print(
         multiplication_check(a, b),
