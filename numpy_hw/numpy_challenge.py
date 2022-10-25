@@ -13,16 +13,18 @@ def matrix_multiplication(m1, m2):
     return m1 @ m2
 
 
-def multiplication_check(m1, m2):
+def multiplication_check(*matrices):
     """
-    Checking whether matrices m1 and m2 can be multiplied
-    The check is based on equality of number of columns of matrix m1 and number of rows of matrix m2
+    Checking whether matrices can be multiplied
+    The check is based on equality of number of columns of first matrix and number of rows of second matrix etc.
 
-    :param m1: first matrix
-    :param m2: second matrix
-    :return: True/False in dependence on whether matrices m1 and m2 can be multiplied
+    :param: matrices to check
+    :return: True/False in dependence on whether matrices can be multiplied
     """
-    return m1.shape[1] == m2.shape[0]
+    for i in range(0, len(matrices) - 1):
+        if matrices[i].shape[1] != matrices[i + 1].shape[0]:
+            return False
+    return True
 
 
 def multiply_matrices(*matrices):
@@ -87,4 +89,4 @@ def compute_pair_distances(m):
 if __name__ == '__main__':
     arr1 = np.array([1, 2, 3, 4, 5, 6])  # 1 2 3 4 5 6
     arr2 = np.arange(1, 7)  # 1 2 3 4 5 6
-    arr3 = np.ones(6)  # 0 0 0 0 0 0
+    arr3 = np.ones(6) * 5  # 5 5 5 5 5 5
