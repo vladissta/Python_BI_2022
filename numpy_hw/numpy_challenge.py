@@ -24,7 +24,8 @@ def multiplication_check(*matrices):
     for i in range(0, len(matrices) - 1):
         if matrices[i].shape[1] != matrices[i + 1].shape[0]:
             return False
-    return True
+        else:
+            return True
 
 
 def multiply_matrices(*matrices):
@@ -34,7 +35,10 @@ def multiply_matrices(*matrices):
     :param matrices: matrices to multiply
     :return: result of matrices multiplication
     """
-    return np.linalg.multi_dot(matrices)
+    if multiplication_check(matrices):
+        return np.linalg.multi_dot(matrices)
+    else:
+        return
 
 
 def compute_2d_distance(v1, v2):
