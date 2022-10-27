@@ -126,6 +126,3 @@ def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
 
         if save_filtered:
             file_writing(failed, output_file_prefix, is_failed=True)
-
-
-main('test.fastq', 'lol', quality_threshold=25)
