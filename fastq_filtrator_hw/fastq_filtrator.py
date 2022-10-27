@@ -18,16 +18,23 @@ def making_dict(file):
 def filter_len(dicts, length_bounds):
     """
     Создание списка словарей прочтений прошедших фильтрацию по длине прочтений.
-    Дается две границы длины, выбираются прочтения длиной попадающие в эти границы включительно
+    Если дается две границы, выбираются прочтения длиной попадающие в эти границы включительно
+    Если дается одна граница, выбираются прочтения по длине меньшие и равные границе
 
     :param dicts: список словарей полученный из функции full_dicts
     :param length_bounds: границы фильтрации по длине (в нуклеотидах)
     :return: список словарей прошедший фильтрацию по длине прочтений
     """
     filtered = []
-    for d in dicts:
-        if length_bounds[0] <= len(d['seq']) <= length_bounds[1]:
-            filtered.append(d)
+    if isinstance(length_bounds, (list, tuple)):
+        for d in dicts:
+            if length_bounds[0] <= len(d['seq']) <= length_bounds[1]:
+                filtered.append(d)
+    else:
+        for d in dicts:
+            if len(d['seq']) <= length_bounds:
+                filtered.append(d)
+
     return filtered
 
 
@@ -42,10 +49,13 @@ def filter_gc_percentage(dicts, gc_bounds):
     :return: список словарей прошедший фильтрацию по GC-составу
     """
     filtered = []
+
     for d in dicts:
-        gs = d['seq'].upper().count('G')
-        cs = d['seq'].upper().count('C')
-        prc = ((gs + cs) / len(d['seq'])) * 100
+        gc = 0
+        for nucl in d['seq']:
+            if nucl.upper() == 'G' or 'C':
+                gc += 1
+        prc = (gc / len(d['seq'])) * 100
         if isinstance(gc_bounds, (list, tuple)):
             if gc_bounds[0] <= prc <= gc_bounds[1]:
                 filtered.append(d)
@@ -59,7 +69,7 @@ def filter_mean_quality(dicts, qual_threshold):
     """
     Создание списка словарей прочтений прошедших фильтрацию по среднему качеству прочтений.
     Дается одна граница, выбираются прочтения по среднему качеству большие и равные границе.
-    Качество считается в значениях шкалы phred33, переводя  ascii-символы в их численные значения
+    Качество считается в значениях шкалы phred33, переводя ascii-символы в их численные значения
 
     :param dicts: список словарей полученный из функции filter_gc_percentage
     :param qual_threshold: граница фильтрации по среднему качеству прочтений (в процентах)
@@ -129,7 +139,7 @@ def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
     :param output_file_prefix: префикс, с которым будут создаваться новые файлы
     с прошедшими и непрошедшими фильтрацию прочтениями
     :param gc_bounds: границы фильтрации по GC-составу (в процентах)
-    :param length_bounds:   границы фильтрации по длине (в нуклеотидах)
+    :param length_bounds: границы фильтрации по длине (в нуклеотидах)
     :param quality_threshold: нижняя граница фильтрации по среднему качеству прочтений (в процентах)
     :param save_filtered: параметр, указывающий нужно ли сохранять отдельным файлом прочтения не прошедшие фильтрацию
     :return: None
