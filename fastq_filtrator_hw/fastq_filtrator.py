@@ -1,6 +1,6 @@
 def making_dict(file):
     """
-    Создание списка словарей с 4 элементами соответсвуюшим строчкам одного прочтения
+    Создание списка словарей с 4 элементами соответствующими строчкам одного прочтения.
 
     :param file: файл .fastq
     :return: список из словарей
@@ -15,119 +15,82 @@ def making_dict(file):
     return full_list
 
 
-def filter_len(dicts, length_bounds):
+def filter_len(read, length_bounds):
     """
-    Создание списка словарей прочтений прошедших фильтрацию по длине прочтений.
-    Если дается две границы, выбираются прочтения длиной попадающие в эти границы включительно
-    Если дается одна граница, выбираются прочтения по длине меньшие и равные границе
+    Если дается две границы, то если прочтение длиной попадает в эти границы включительно, возвращает True.
+    Если дается одна граница, то если прочтение длиной меньше этой границы, возвращает True.
 
-    :param dicts: список словарей полученный из функции full_dicts
-    :param length_bounds: границы фильтрации по длине (в нуклеотидах)
-    :return: список словарей прошедший фильтрацию по длине прочтений
+    :param read: прочтение, у которого проверяем попадает ли его длина в установленные границы.
+    :param length_bounds: границы фильтрации по длине (в нуклеотидах).
+    :return: True/False
     """
-    filtered = []
     if isinstance(length_bounds, (list, tuple)):
-        for d in dicts:
-            if length_bounds[0] <= len(d['seq']) <= length_bounds[1]:
-                filtered.append(d)
+        if length_bounds[0] <= len(read['seq']) <= length_bounds[1]:
+            return True
     else:
-        for d in dicts:
-            if len(d['seq']) <= length_bounds:
-                filtered.append(d)
-
-    return filtered
+        if len(read['seq']) <= length_bounds:
+            return True
 
 
-def filter_gc_percentage(dicts, gc_bounds):
+def filter_gc_percentage(read, gc_bounds):
     """
-    Создание списка словарей прочтений прошедших фильтрацию по GC-составу.
-    Если дается две границы, выбираются прочтения по GC-составу попадающие в эти границы включительно
-    Если дается одна граница, выбираются прочтения по GC-составу меньшие и равные границе
+    Если дается две границы, то если прочтение по GC-составу попадает в эти границы включительно, возвращает True.
+    Если дается одна граница, то если прочтение по GC-составу меньше этой границы, возвращает True.
 
-    :param dicts: список словарей полученный из функции filter_len
-    :param gc_bounds: границы фильтрации по GC-составу (в процентах)
-    :return: список словарей прошедший фильтрацию по GC-составу
+    :param read: прочтение, у которого проверяем попадает ли его длина в установленные границы.
+    :param gc_bounds: границы фильтрации по GC-составу (в процентах).
+    :return: True/False
     """
-    filtered = []
+    gc = 0
+    for nucl in read['seq']:
+        if nucl.upper() == 'G' or 'C':
+            gc += 1
+    prc = (gc / len(read['seq'])) * 100
 
-    for d in dicts:
-        gc = 0
-        for nucl in d['seq']:
-            if nucl.upper() == 'G' or 'C':
-                gc += 1
-        prc = (gc / len(d['seq'])) * 100
-        if isinstance(gc_bounds, (list, tuple)):
-            if gc_bounds[0] <= prc <= gc_bounds[1]:
-                filtered.append(d)
-        else:
-            if prc <= gc_bounds:
-                filtered.append(d)
-    return filtered
+    if isinstance(gc_bounds, (list, tuple)):
+        if gc_bounds[0] <= prc <= gc_bounds[1]:
+            return True
+    else:
+        if prc <= gc_bounds:
+            return True
+    return False
 
 
-def filter_mean_quality(dicts, qual_threshold):
+def filter_mean_quality(read, qual_threshold):
     """
-    Создание списка словарей прочтений прошедших фильтрацию по среднему качеству прочтений.
-    Дается одна граница, выбираются прочтения по среднему качеству большие и равные границе.
+    Дается одна граница, функция возвращает True, если прочтение по среднему качеству большие или равно границе.
     Качество считается в значениях шкалы phred33, переводя ascii-символы в их численные значения
 
-    :param dicts: список словарей полученный из функции filter_gc_percentage
+    :param read: прочтение, у которого проверяем попадает ли его длина в установленные границы.
     :param qual_threshold: граница фильтрации по среднему качеству прочтений (в процентах)
-    :return: список словарей отфильтрованный по среднему качеству прочтений
+    :return: True/False
     """
-    filtered = []
-    for d in dicts:
-        qualities = [ord(i) - 33 for i in d['quality']]
-        mean = sum(qualities) / len(qualities)
-        if mean >= qual_threshold:
-            filtered.append(d)
-    return filtered
+    qualities = [ord(i) - 33 for i in read['quality']]
+    mean = sum(qualities) / len(qualities)
+    if mean >= qual_threshold:
+        return True
+    return False
 
 
-def failed_filter(full_dicts, filtered_dicts):
+def file_writing(dicts, prefix, is_failed=False):
     """
-    Создание списка словарей с непрошедшими фильтрацию прочтениями
+    Создание файлов с прочтениями .
+    Название {prefix}_passed.fastq или {prefix}_failed.fastq в зависимости от параметра is_failed
 
-    :param full_dicts: список словарей полученный из функции making_dicts (все прочтения без фильтрации)
-    :param filtered_dicts: список словарей прошедший фильтрацию
-    :return: список словарей с прочтениями непрошедшими фильтрацию
-    """
-    failed_dicts = []
-    for i in full_dicts:
-        if i not in filtered_dicts:
-            failed_dicts.append(i)
-    return failed_dicts
-
-
-def file_writing_passed(filtered_dicts, prefix):
-    """
-    Создание файлов с прочтениями прошедшими фильтрацию.
-    Название {prefix}_passed.fastq.
-
-    :param filtered_dicts: список словарей с прочтениями прошедшими фильтраци
-    :param prefix: префикс в начале названия файла
+    :param is_failed: True/False в зависимости от того нужно нам записать в файл прочтения прошедшие фильтрацию или нет.
+    :param dicts: список словарей с прочтениями.
+    :param prefix: префикс в начале названия файла.
     :return: None
     """
-    with open(f'{prefix}_passed.fastq', 'w') as f:
-        for i in filtered_dicts:
-            for j in i.values():
-                print(j, file=f)
+    if is_failed:
+        file_name = 'passed'
+    else:
+        file_name = 'failed'
 
-
-def file_writing_failed(failed_dicts, prefix):
-    """
-    Создание файлов с прочтениями не прошедшими фильтрацию.
-    Название {prefix}_failed.fastq
-    (запись происходит только при значении параметра save_filtered=True)
-
-    :param failed_dicts: список словарей с прочтениями не прошедшими фильтрацию
-    :param prefix: префикс в начале названия файла
-    :return None
-    """
-    with open(f'{prefix}_failed.fastq', 'w') as f:
-        for i in failed_dicts:
-            for j in i.values():
-                print(j, file=f)
+    with open(f'{prefix}_{file_name}.fastq', 'w') as file:
+        for read in dicts:
+            for line in read.values():
+                print(line, file=file)
 
 
 def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
@@ -135,33 +98,34 @@ def main(input_fastq, output_file_prefix, gc_bounds=(0, 100),
     """
     Функция, в которой происходит вся фильтрация и запись файлов.
 
-    :param input_fastq: файл .fastq, который надо отфильтровать
+    :param input_fastq: файл fastq, который надо отфильтровать.
     :param output_file_prefix: префикс, с которым будут создаваться новые файлы
-    с прошедшими и непрошедшими фильтрацию прочтениями
-    :param gc_bounds: границы фильтрации по GC-составу (в процентах)
-    :param length_bounds: границы фильтрации по длине (в нуклеотидах)
-    :param quality_threshold: нижняя граница фильтрации по среднему качеству прочтений (в процентах)
-    :param save_filtered: параметр, указывающий нужно ли сохранять отдельным файлом прочтения не прошедшие фильтрацию
+    с прошедшими и непрошедшими фильтрацию прочтениями.
+    :param gc_bounds: границы фильтрации по GC-составу (в процентах).
+    :param length_bounds: границы фильтрации по длине (в нуклеотидах).
+    :param quality_threshold: нижняя граница фильтрации по среднему качеству прочтений (в процентах).
+    :param save_filtered: параметр, указывающий нужно ли сохранять отдельным файлом прочтения не прошедшие фильтрацию.
     :return: None
     """
 
     with open(input_fastq) as file:
-        full_dicts = making_dict(file)  # список словарей с 4 элементами соответсвуюшим строчкам одного прочтения
+        full_dicts = making_dict(file)  # список словарей с 4 элементами соответствующим строчкам одного прочтения
 
-        # фильтрация по длине прочтений
-        len_filtered_dicts = filter_len(full_dicts, length_bounds)
+        # filtering
+        failed = []
+        for n, read in enumerate(full_dicts):
+            fil_len = filter_len(read, length_bounds)
+            fil_gc = filter_gc_percentage(read, gc_bounds)
+            fil_qual = filter_mean_quality(read, quality_threshold)
 
-        # фильтрация по количеству GC
-        gc_filtered_dicts = filter_gc_percentage(len_filtered_dicts, gc_bounds)
-
-        # фильтрация по качеству прочтений
-        final_filtered_dicts = filter_mean_quality(gc_filtered_dicts, quality_threshold)
-
-        # список словарей с прочтениями непрошедшими фильтрацию
-        failed_dicts = failed_filter(full_dicts, final_filtered_dicts)
+            if fil_len and fil_gc and fil_qual:
+                failed.append(full_dicts.pop(n))
 
         # запись файлов
-        file_writing_passed(final_filtered_dicts, output_file_prefix)
+        file_writing(full_dicts, output_file_prefix)
 
         if save_filtered:
-            file_writing_failed(failed_dicts, output_file_prefix)
+            file_writing(failed, output_file_prefix, is_failed=True)
+
+
+main('test.fastq', 'lol', quality_threshold=25)
