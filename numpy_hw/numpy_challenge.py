@@ -13,7 +13,7 @@ def matrix_multiplication(m1, m2):
     return m1 @ m2
 
 
-def multiplication_check(*matrices):
+def multiplication_check(matrices):
     """
     Checking whether matrices can be multiplied
     The check is based on equality of number of columns of first matrix and number of rows of second matrix etc.
@@ -24,11 +24,10 @@ def multiplication_check(*matrices):
     for i in range(0, len(matrices) - 1):
         if matrices[i].shape[1] != matrices[i + 1].shape[0]:
             return False
-        else:
-            return True
+    return True
 
 
-def multiply_matrices(*matrices):
+def multiply_matrices(matrices):
     """
     Multiplication of several matrices by matrix multiplication rules (not elementwise) in order they were written
 
@@ -76,7 +75,8 @@ def compute_pair_distances(m):
 
     # pairs of row numbers of matrix m between which distances will be calculated
     # also these are coordinates of future triangular matrix of distances
-    i_row, i_column = np.triu_indices(3, k=1)  # for 3x3 matrix: i_row = array(0, 0, 1); i_column = array(1, 1, 2)
+    i_row, i_column = np.triu_indices(n=m.shape[0], k=1)
+    # for 3x3 matrix: i_row = array(0, 0, 1); i_column = array(1, 1, 2)
 
     # calculating pairwise distances step by step
     differences = m[i_row] - m[i_column]  # i_row and i_column here uses as numbers of rows of matrix m
