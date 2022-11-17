@@ -14,8 +14,8 @@ import seaborn as sns
 # In[28]:
 
 
-with open('references.txt') as refs:
-    ftp = open('ftps.txt', 'w')
+with open('../references.txt') as refs:
+    ftp = open('../data/ftps.txt', 'w')
     for line in refs:
         for link in re.findall(r'ftp\..+?[;|\t|\n]\b', line.strip()):
             print(link.strip(';\t'), file=ftp)
@@ -25,8 +25,8 @@ with open('references.txt') as refs:
 # In[29]:
 
 
-with open('2430AD.txt') as story:
-    nums = open('nums.txt', 'w')
+with open('../2430AD.txt') as story:
+    nums = open('../data/nums.txt', 'w')
     for line in story:
         match_num = re.findall(r'(?:\d+)', line)
         if match_num:
@@ -38,8 +38,8 @@ with open('2430AD.txt') as story:
 # In[30]:
 
 
-with open('2430AD.txt') as story:
-    a_words = open('a_words.txt', 'w')
+with open('../2430AD.txt') as story:
+    a_words = open('../data/a_words.txt', 'w')
     for line in story:
         match = re.findall(r'\b[\w\']*[aA][\w\']*?\b', line)
         if match:
@@ -51,8 +51,8 @@ with open('2430AD.txt') as story:
 # In[31]:
 
 
-with open('2430AD.txt') as story:
-    exclamatory_sentences = open('exclamatory_sentence.txt', 'w')
+with open('../2430AD.txt') as story:
+    exclamatory_sentences = open('../data/exclamatory_sentence.txt', 'w')
     for line in story:
         match = re.findall(r'([A-Z](?:[^[\.])*?!)', line)
         if match:
@@ -66,7 +66,7 @@ with open('2430AD.txt') as story:
 # In[32]:
 
 
-with open('2430AD.txt') as story:
+with open('../2430AD.txt') as story:
     words = story.read()
     max_letters = 0
     while True:
