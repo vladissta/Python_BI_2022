@@ -1,8 +1,19 @@
 import sys
-import numpy as np
 
 
 def sequential_map(*args):
+    """
+    sequential_map takes several functions, and container of values to which these functions will be applied
+    and return list of results after application all functions to values container
+
+    [!] Functions should return application result of them
+    [!] Container of values should always be written last
+    [!] Functions apply in order that they were written
+
+    :param args: functions and container of values (last!)
+    :return: list with modified values from container
+    """
+
     *functions, values = args
 
     for fun in functions:
@@ -12,6 +23,18 @@ def sequential_map(*args):
 
 
 def consensus_filter(*args):
+    """
+    consensus_filter takes several filtering functions, and container of values to which these functions will be applied
+    and return list of values that passed application of functions to them with returning True
+
+    [!] Functions should return True/False
+    [!] Container of values should always be written last
+    [!] Functions apply in order that they were written
+
+    :param args: functions and container of values (last!)
+    :return: list with values from container which passed the filtration
+    """
+
     *functions, values = args
 
     for fun in functions:
@@ -21,6 +44,18 @@ def consensus_filter(*args):
 
 
 def conditional_reduce(conditional_fun, apply_fun, values):
+    """
+
+    onditional_reduce takes values that filtering with special function (conditional_fun)
+    and then apply to two values passed the filter another function (apply_fun)
+
+
+    :param conditional_fun:
+    :param apply_fun:
+    :param values:
+    :return:
+    """
+
     filtered_values = list(filter(conditional_fun, values))
 
     return apply_fun(filtered_values[0], filtered_values[1])
@@ -80,16 +115,10 @@ if __name__ == '__main__':
     my_fun = func_chain(lambda x: x + 2, lambda x: (x / 4, x // 4))
     print(my_fun(37, 4))
 
-    ax1_mean, ax1_max, ax1_sum = multiple_partial(np.mean, np.max, np.sum, axis=1)
-    ar = np.arange(6).reshape(2, 3)
-    print(ar)
-    print(ax1_sum(ar), ax1_max(ar), ax1_mean(ar))
-
     new_min, new_max = multiple_partial(min, max, key=lambda x: -x)
-    print(new_max(1, 2, 2), new_min(1, 2, 3))
+    print(new_max(1, 2, 3), new_min(1, 2, 3))
 
     super_print('What a pain, Argentina vs Jamaica:', 5, ":", 0, sep='  ', end='!')
-    super_print('''He said, "One day, you'll leave this world behind
-So live a life you will remember"
-My father told me when I was just a child
-"These are the nights that never die"''', file='Avicii.txt')
+    super_print('He said, "One day, you\'ll leave this world behind', 'So live a life you will remember"',
+                'My father told me when I was just a child', '"These are the nights that never die"',
+                sep='\n', file='Avicii.txt')
