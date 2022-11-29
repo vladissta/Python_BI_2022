@@ -178,9 +178,9 @@ if __name__ == '__main__':
     assert sequential_map_2(lambda x: x ** 2, lambda x: x + 1, [1, 2, 3, 4, 5]) == [2, 5, 10, 17, 26]
     assert sequential_map(lambda x: x + " wow", lambda x: x.upper(), ['one', 'two']) == ['ONE WOW', 'TWO WOW']
 
-    my_fun = func_chain(lambda x: x + 3, lambda x: (x / 4))
-    assert my_fun(37) == 10
-    assert my_fun(7, 17) == [2.5, 5]
+    my_fun = func_chain(lambda x: x + 2, lambda x: (x / 4, x // 4))
+    assert my_fun(37) == (9.75, 9)
+    assert my_fun(7, 17) == [(2.25, 2), (4.75, 4)]
 
     new_min, new_max = multiple_partial(min, max, key=lambda x: -x)
     assert new_max(1, 2, 3), new_min(1, 2, 3) == (1, 3)
