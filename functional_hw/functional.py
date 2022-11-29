@@ -46,17 +46,22 @@ def consensus_filter(*args):
 def conditional_reduce(conditional_fun, apply_fun, values):
     """
     conditional_reduce takes values that filters with special function (conditional_fun)
-    and then applies another function (apply_fun) to two values passed the filter.
+    and then applies another function (apply_fun) to values passed the filter.
+    apply_fun is applied cumulatively in given order to the values (like base reduce function)
 
     :param conditional_fun: filtering function.
-    :param apply_fun: function that apply to two values passed the filtering.
+    :param apply_fun: function that is applied to values passed the filtering cumulatively in given order.
     :param values: container of values.
     :return: result of application [apply_fun] to filtered by [conditional_fun] values from container [values].
     """
 
     filtered_values = list(filter(conditional_fun, values))
+    result = filtered_values[0]
 
-    return apply_fun(filtered_values[0], filtered_values[1])
+    for i in range(1, len(filtered_values)):
+        result = apply_fun(result, filtered_values[i])
+
+    return result
 
 
 def func_chain(*args):
@@ -165,10 +170,10 @@ if __name__ == '__main__':
     assert consensus_filter(lambda x: x > 3, lambda x: x < 6, [1, 2, 3, 4, 5]) == [4, 5]
     assert consensus_filter(lambda x: len(x) > 3, lambda x: x[-1] == '!', ['wow!', 'how?', 'ok!']) == ['wow!']
 
-    assert conditional_reduce(lambda x: x > 3, lambda x, y: x * y, [1, 2, 3, 4, 5]) == 20
+    assert conditional_reduce(lambda x: x > 2, lambda x, y: x * y, [1, 2, 3, 4, 5]) == 60
     assert conditional_reduce(lambda x: len(x) > 3 and x[-1] == '!',
                               lambda x, y: x + ' ' + y,
-                              ['wow!', 'how?', 'ok!', 'thanks!']) == "wow! thanks!"
+                              ['wow!', 'how!', 'ok!', 'thanks!']) == "wow! how! thanks!"
 
     assert sequential_map_2(lambda x: x ** 2, lambda x: x + 1, [1, 2, 3, 4, 5]) == [2, 5, 10, 17, 26]
     assert sequential_map(lambda x: x + " wow", lambda x: x.upper(), ['one', 'two']) == ['ONE WOW', 'TWO WOW']
