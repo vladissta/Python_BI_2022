@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[3]:
+# In[1]:
 
 
 import numpy as np
@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import re
+import math
 from matplotlib.patches import ConnectionPatch
 
 
@@ -20,15 +21,15 @@ from matplotlib.patches import ConnectionPatch
 
 
 def read_gff(file):
-    return pd.read_table(file , sep='\t', skiprows=1, 
-                  names = ['chromosome', 'source', "type", "start", "end", "score", "strand", "phase", "attributes"])
+    return pd.read_table(file , sep='\t', comment="#", 
+                  names=['chromosome', 'source', "type", "start", "end", "score", "strand", "phase", "attributes"])
 
 
 # In[3]:
 
 
 def read_bed6(file):
-    return pd.read_table(file, sep='\t', names = ["chromosome", "start", "end", "name", "score", "strand"])
+    return pd.read_table(file, sep='\t', names=["chromosome", "start", "end", "name", "score", "strand"])
 
 
 # ### Tables
@@ -36,14 +37,14 @@ def read_bed6(file):
 # In[4]:
 
 
-gff = read_gff('rrna_annotation.gff')
+gff = read_gff('data/rrna_annotation.gff')
 gff
 
 
 # In[5]:
 
 
-bed = read_bed6('alignment.bed')
+bed = read_bed6('data/alignment.bed')
 bed
 
 
@@ -70,9 +71,9 @@ chr_types_rna_count
 
 fig, axes = plt.subplots(figsize=(14, 8), tight_layout=True);
 
-sns.barplot(chr_types_rna_count, x = 'chromosome', y = 'count', hue = 'attributes');
+sns.barplot(chr_types_rna_count, x='chromosome', y='count', hue='attributes');
 plt.xticks(rotation=90);
-plt.legend(loc ='upper right', prop={'size': 13}, title = 'RNA type').get_title().set_fontsize('13')
+plt.legend(loc='upper right', prop={'size': 13}, title='RNA type').get_title().set_fontsize('13')
 plt.ylabel('Count')
 plt.xlabel('Sequence')
 plt.tight_layout();
@@ -83,7 +84,7 @@ plt.tight_layout();
 # In[9]:
 
 
-bed_align = gff.merge(bed, on = 'chromosome', suffixes=('_x', '_y'))
+bed_align = gff.merge(bed, on='chromosome', suffixes=('_x', '_y'))
 bed_align = bed_align.loc[(bed_align.start_x >= bed_align.start_y) & (bed_align.end_x <= bed_align.end_y)]
 bed_align
 
@@ -92,16 +93,16 @@ bed_align
 
 # ### Table of genes expression
 
-# In[4]:
+# In[10]:
 
 
-de = pd.read_table('diffexpr_data.tsv.gz')
+de = pd.read_table('data/diffexpr_data.tsv.gz')
 de
 
 
 # ### Min and Max values of log fold change
 
-# In[5]:
+# In[11]:
 
 
 min_x = de.logFC.min()
@@ -114,7 +115,7 @@ min_x, max_x
 
 # **This colum was used for coloring**
 
-# In[6]:
+# In[12]:
 
 
 de.loc[(de.logFC > 0) & (de.log_pval > -np.log10(0.05)), 'down_up'] = 'Significantly upregulated'
@@ -127,21 +128,21 @@ de.down_up.value_counts()
 
 # ### Top 2 up- and downregulated genes
 
-# In[7]:
+# In[13]:
 
 
 top_upreg = de.loc[de.down_up == 'Significantly upregulated'].sort_values(by = "logFC", ascending = False).head(2)
 top_upreg
 
 
-# In[8]:
+# In[14]:
 
 
 top_downreg = de.loc[de.down_up == 'Significantly downregulated'].sort_values(by = "logFC").head(2)
 top_downreg
 
 
-# In[9]:
+# In[15]:
 
 
 genes_to_annotate = pd.concat([top_downreg, top_upreg]).iloc[:,[0,1,4]]
@@ -150,7 +151,7 @@ genes_to_annotate
 
 # ### Finally, the plot!
 
-# In[12]:
+# In[16]:
 
 
 #parameters for bold italic font of math formulas in latex
@@ -174,10 +175,12 @@ axes.set_ylabel(r"$\mathbf{-log_{10}(p\ value\ corrected)}$", fontsize=20);
 # grey lines
 plt.axvline(0, linestyle = "--", color='grey', linewidth=3);
 plt.axhline(-np.log10(0.05), linestyle = "--", color='grey', linewidth=3);
-plt.text(7, -np.log10(0.05)+1,'p value = 0.05', color='grey', fontweight='bold', fontsize=14)
+plt.text(7, -np.log10(0.05) + 1,'p value = 0.05', color='grey', fontweight='bold', fontsize=14)
 
 # setting ticks and spines parameters
-for spine in axes.spines.values(): spine.set_linewidth(2) 
+for spine in axes.spines.values(): 
+    spine.set_linewidth(2)
+    
 plt.xticks(range(-10,11,5),weight='bold', fontsize=12)
 plt.yticks(weight='bold', fontsize=12)
 axes.tick_params(which='major', width=2, length=6)
@@ -185,7 +188,7 @@ axes.tick_params(which='minor', width=1.5, length=3)
 plt.minorticks_on();
 
 #limits of X axis
-plt.xlim([-11, 11]);
+plt.xlim([math.floor(min_x), math.ceil(max_x)]);
 
 # annotating by arrows
 for num_of_gene in range(4): 
@@ -195,7 +198,7 @@ for num_of_gene in range(4):
                   xytext=(genes_to_annotate.iloc[num_of_gene].logFC + 0.2, 
                           genes_to_annotate.iloc[num_of_gene].log_pval + 13),
                   weight='bold', fontsize=12,
-                  arrowprops=dict(linewidth=0.5, facecolor = 'red', 
+                  arrowprops=dict(linewidth=0.5, facecolor='red', 
                                   headlength=8, width=2, headwidth=7, shrink=0.1))
 
 
@@ -203,15 +206,15 @@ for num_of_gene in range(4):
 
 # ### Preparing data
 
-# In[35]:
+# In[17]:
 
 
-pop_data = pd.read_csv('population_by_country_2020.csv')
+pop_data = pd.read_csv('data/population_by_country_2020.csv')
 pop_data = pop_data.loc[pop_data['Population (2020)']>50000000]
 pop_data.head(5)
 
 
-# In[32]:
+# In[18]:
 
 
 # copying data for manipulations
@@ -238,7 +241,7 @@ data_for_pie
 
 # ### Pie chart!
 
-# In[27]:
+# In[19]:
 
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 8))
@@ -267,10 +270,12 @@ for i, p in enumerate(wedges):
                  bbox=dict(boxstyle="round", fc="w" , lw=0.7, alpha=1, clip_on=True))
 
 # BARPLOT
-ax2.axis('off')
-ax2.set_xlim(-1.5 * width, 1.5 * width)
 bottom = 0
 width = 2
+ax2.axis('off')
+ax2.set_xlim(-1.5 * width, 1.5 * width)
+
+
 
 for j, (height, label) in enumerate([*zip(pop_data.loc[pop_data['Population (2020)'] <= 130000000, 
                                                        'Population (2020)'], names_of_others)]):
@@ -298,22 +303,22 @@ con.set_linewidth(2)
 
 # ## EDA
 
-# In[23]:
+# In[21]:
 
 
-covid_df = pd.read_csv('owid-covid-data.csv')
+covid_df = pd.read_csv('data/owid-covid-data.csv')
 covid_df
 
 
 # ## Total number of cases of infection on the continents
 
-# In[24]:
+# In[22]:
 
 
 continent_data = covid_df.loc[covid_df.date =='9/30/2022'].groupby('continent').total_cases.sum().reset_index()
 
 
-# In[156]:
+# In[23]:
 
 
 fig, _ = plt.subplots(figsize=(3,3))
@@ -322,7 +327,7 @@ plt.pie(x=continent_data.total_cases, labels=continent_data.continent, rotatelab
 
 # **I assume that Africa simply lacks data, as it is a large continent where epidemics often occur. Africa has weak medicine and badly tracks statistics of disease. It is possible to find out the lack of data by looking through the number of cases per inhabitant of the continent: for other continents where medicine is well developed and statistics are well monitored this number will be +- the same (or at least the order)**
 
-# In[121]:
+# In[24]:
 
 
 continent_data['total_cases divided on population'] = \
@@ -334,7 +339,7 @@ continent_data
 # 
 # Also some problem with data have Asia. It could be connected with China
 
-# In[149]:
+# In[25]:
 
 
 countries = covid_df.loc[covid_df.date =='9/30/2022'].groupby('location').total_cases.sum().reset_index()
@@ -348,7 +353,7 @@ cases_china
 
 # ### First reports about cases
 
-# In[117]:
+# In[26]:
 
 
 non_zero_cases = covid_df.loc[(pd.notnull(covid_df.total_cases))&
@@ -358,7 +363,7 @@ dates = pd.to_datetime(non_zero_cases.groupby("location").
                        date.head(1)).sort_values().head(20)
 
 
-# In[110]:
+# In[27]:
 
 
 covid_df.loc[pd.to_datetime(covid_df.date.sort_index()).index .isin(dates.index)].sort_values(by='date')
