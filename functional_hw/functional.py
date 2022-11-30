@@ -46,16 +46,26 @@ def consensus_filter(*args):
 def conditional_reduce(conditional_fun, apply_fun, values):
     """
     conditional_reduce takes values that filters with special function (conditional_fun)
-    and then applies another function (apply_fun) to values passed the filter.
+    and then applies another function (apply_fun) to values passed by the filter.
     apply_fun is applied cumulatively in given order to the values (like base reduce function)
+
+    [!] If container with values has length of one, conditional_reduce will return the first value of container
+    [!] At least one value should pass the filter.
+    If only one value have been passed, conditional_reduce will return it.
 
     :param conditional_fun: filtering function.
     :param apply_fun: function that is applied to values passed the filtering cumulatively in given order.
     :param values: container of values.
     :return: result of application [apply_fun] to filtered by [conditional_fun] values from container [values].
     """
+    if len(values) == 1:
+        return values[0]
 
     filtered_values = list(filter(conditional_fun, values))
+
+    if not filtered_values:
+        raise IndexError("list with values passed by the filter has zero length")
+
     result = filtered_values[0]
 
     for i in range(1, len(filtered_values)):
@@ -73,7 +83,7 @@ def func_chain(*args):
     [!] Functions should return application results of them.
 
     New function takes some values (*values)
-    and returns list of modified values or one value (not in list) depended on number of values in result.
+    and returns list of modified values or one value (not listed) depended on number of values in result.
 
     :param args: functions.
     :return: new function includes taken functions.
@@ -91,7 +101,7 @@ def func_chain(*args):
 
 def sequential_map_2(*args):
     """
-    [This function have te functionality as sequential_map, but utilizes func_chain function in it.]
+    [This function have the same functionality as sequential_map, but utilizes func_chain function in it.]
 
     sequential_map_2 takes several functions, and container of values to which these functions will be applied
     and return list of results after application all functions to values container.
