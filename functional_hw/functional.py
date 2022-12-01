@@ -58,18 +58,14 @@ def conditional_reduce(conditional_fun, apply_fun, values):
     :param values: container of values.
     :return: result of application [apply_fun] to filtered by [conditional_fun] values from container [values].
     """
-    if len(values) == 1:
-        return values[0]
-
     filtered_values = list(filter(conditional_fun, values))
 
     if not filtered_values:
         raise IndexError("list with values passed by the filter has zero length")
 
     result = filtered_values[0]
-
-    for i in range(1, len(filtered_values)):
-        result = apply_fun(result, filtered_values[i])
+    for next_val in filtered_values[1:]:
+        result = apply_fun(result, next_val)
 
     return result
 
@@ -184,6 +180,7 @@ if __name__ == '__main__':
     assert conditional_reduce(lambda x: len(x) > 3 and x[-1] == '!',
                               lambda x, y: x + ' ' + y,
                               ['wow!', 'how!', 'ok!', 'thanks!']) == "wow! how! thanks!"
+    assert conditional_reduce(lambda x: x > 2, lambda x: x ** 2, [3]) == 3
 
     assert sequential_map_2(lambda x: x ** 2, lambda x: x + 1, [1, 2, 3, 4, 5]) == [2, 5, 10, 17, 26]
     assert sequential_map(lambda x: x + " wow", lambda x: x.upper(), ['one', 'two']) == ['ONE WOW', 'TWO WOW']
