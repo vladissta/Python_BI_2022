@@ -7,7 +7,7 @@ import argparse
 parser = argparse.ArgumentParser()
 
 parser.add_argument('file', type=argparse.FileType('r'),
-                    default=[sys.stdin], help='input to sort', nargs='*')
+                    help='input to sort', nargs='*', default=[sys.stdin])
 
 args = parser.parse_args()
 

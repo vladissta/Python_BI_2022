@@ -17,12 +17,12 @@ several_output = len(args.path) > 1
 for path in args.path:
     if args.a:
         sys.stdout.write(f'{path}:\n' * several_output)
-        sys.stdout.write('\t'.join([os.curdir, os.pardir] +
+        sys.stdout.write('\n'.join([os.curdir, os.pardir] +
                                    sorted(os.listdir(path))) +
                          "\n\n" * several_output)
     else:
         sys.stdout.write(f'{path}:\n' * several_output)
         sys.stdout.write(
-            '\t'.join(sorted([file for file in os.listdir(path)
+            '\n'.join(sorted([file for file in os.listdir(path)
                               if not file.startswith('.')])) +
             "\n\n" * several_output * (path != args.path[-1]))
