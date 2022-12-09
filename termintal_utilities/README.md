@@ -51,4 +51,4 @@ cat file | wc.py
 Directory contains screenshots where displayed work of bash utilities and their python analogs
 
 ### files_for_testing  
-Files that were used for testing (they were displayed on screenshots)
+Files which  were used for testing (they were displayed on screenshots)
