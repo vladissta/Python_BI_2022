@@ -23,7 +23,7 @@ if args.w:
 if args.c:
     counters.append(lambda x: len(x))
 if True not in (args.l, args.w, args.c):
-    counters = [lambda x: 1, lambda x: len(x.split()), lambda x: len(x)]
+    counters = [lambda x: 1, lambda x: len(x.split()), lambda x: len(x.encode('utf-8'))]
 
 total = []
 
@@ -37,7 +37,7 @@ for inp in args.inp:
     if inp.name == '<stdin>':
         sys.stdout.write('\t' + '\t'.join(list(map(str, stats))) + '\n')
     else:
-        sys.stdout.write('\t' + '\t'.join(list(map(str, stats)), ) + f' {inp.name}\n')
+        sys.stdout.write('\t' + '\t'.join(list(map(str, stats))) + f' {inp.name}\n')
 
 if len(total) > 1:
     total_stats_lst = list(zip(*total))

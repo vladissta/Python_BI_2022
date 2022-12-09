@@ -12,8 +12,6 @@ parser.add_argument('-r', action='store_true')
 
 args = parser.parse_args()
 
-print(args.path)
-
 if args.r:
     for path in args.path:
         shutil.rmtree(path)

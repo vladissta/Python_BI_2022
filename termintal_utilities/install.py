@@ -7,13 +7,14 @@ import shutil
 for n, path in enumerate(os.environ['PATH'].split(':')):
     print(n + 1, path)
 
-variants = [i for i in range(len(os.environ['PATH'].split(':')))]
+variants = [i + 1 for i in range(len(os.environ['PATH'].split(':')))]
 
 while True:
-    choice = input('Choose directory to install scripts (write number): ')
-    if choice and choice in variants:
+    choice = int(input('Choose directory to install scripts (write number): '))
+    if choice and (choice in variants):
         break
-    print('Choose correct number!')
+    else:
+        print('Choose correct number!')
 
 files = os.listdir('./scripts')
 
