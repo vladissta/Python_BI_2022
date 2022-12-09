@@ -47,4 +47,8 @@ wc.py file1 file2
 cat file | wc.py 
 ```
 
+### screenshots_of_comparisons  
+Directory contains screenshots where displayed work of bash utilities and their python analogs
 
+### files_for_testing  
+Files that were used for testing (they were displayed on screenshots)
