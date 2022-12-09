@@ -8,9 +8,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('inp', help='file to process',
                     nargs='*',
                     type=argparse.FileType('r'), default=[sys.stdin])
-parser.add_argument('-l', help='number of lines', action="store_true")
-parser.add_argument('-w', help='number of words', action="store_true")
-parser.add_argument('-c', help='number of characters', action="store_true")
+parser.add_argument('-l', help='display number of lines', action="store_true")
+parser.add_argument('-w', help='display number of words', action="store_true")
+parser.add_argument('-c', help='display number of characters', action="store_true")
 
 args = parser.parse_args()
 

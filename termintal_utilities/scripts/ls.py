@@ -7,7 +7,7 @@ import argparse
 parser = argparse.ArgumentParser()
 
 
-parser.add_argument('path', default='.', help='directory to show', type=str, nargs='*')
+parser.add_argument('path', default='.', help='directory to show contents', type=str, nargs='*')
 parser.add_argument('-a', help='show all files', action='store_true')
 
 args = parser.parse_args()
