@@ -2,9 +2,7 @@
 
 import sys
 import os
-import stat
 import argparse
-import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument('inp', help='file to process',
@@ -13,9 +11,6 @@ parser.add_argument('inp', help='file to process',
 parser.add_argument('-l', help='number of lines', action="store_true")
 parser.add_argument('-w', help='number of words', action="store_true")
 parser.add_argument('-c', help='number of characters', action="store_true")
-
-if sys.stdin.isatty():
-    raise Exception
 
 args = parser.parse_args()
 
