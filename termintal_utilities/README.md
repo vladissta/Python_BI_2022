@@ -18,8 +18,9 @@ cd terminal_utilities
 
 ### scripts 
 Directory contains all scripts:
-- **ls.py** [_directory_]   
+- **ls.py** [-a] [_directory_]   
 Displays list of contents of _directory_. If _directory_ is not specified, displays contents of current directory
+If _-a_ flag specified, displays all files including hidden ones. 
 ```commandline
 ls.py
 ls.py path/to/dir/
@@ -31,16 +32,16 @@ Removes files or directories specified in _path_
 rm.py file1 file2
 rm.py -r directory1 directory2
 ```
-- **sort.py** _file_  
-Sorts lines of text from _stdin_ or from files specified in _file_ alphabetically
+- **sort.py** _text_  
+Sorts lines of text from _stdin_ or from files specified in _text_ alphabetically
 ```commandline
 sort.py textfile1 textfile2
 cat textfile | sort.py
 ```
-- **wc.py** [_-l_][_-w_][_-c_]  _file_  
-Counts lines (_-l_), words (_-w_) and characters (_-c_) of _file_ or _stdin_ if certain flag is specified  
+- **wc.py** [_-l_][_-w_][_-c_]  _text_  
+Counts lines (_-l_), words (_-w_) and characters (_-c_) of _text_ or _stdin_ if certain flag is specified  
 If no flags are specified, counts all statistics
-If several files were specified in _file_ displays statistics of each file and total sum of them 
+If several files were specified in _text_ displays statistics of each file and total sum of them 
 ```commandline
 wc.py -l -w -c file1 file2
 wc.py file1 file2
@@ -48,7 +49,7 @@ cat file | wc.py
 ```
 
 ### screenshots_of_comparisons  
-Directory contains screenshots where displayed work of bash utilities and their python analogs
+Directory contains screenshots where displayed work of bash utilities and their python analogs.
 
 ### files_for_testing  
 Files which  were used for testing (they were displayed on screenshots)

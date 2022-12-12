@@ -5,10 +5,11 @@ import sys
 import argparse
 import shutil
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description='Removes files or directories',
+                                 usage='rm.py [-r] [path ...]')
 
-parser.add_argument('path', type=str, help='path to delete', nargs='+')
-parser.add_argument('-r', action='store_true')
+parser.add_argument('path', type=str, help='directory/file to delete', nargs='+')
+parser.add_argument('-r', action='store_true', help='to delete directory recursively ')
 
 args = parser.parse_args()
 

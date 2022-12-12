@@ -4,8 +4,8 @@ import sys
 import os
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('inp', help='file to process',
+parser = argparse.ArgumentParser(description='Counts lines, words and characters of text (dy default - stdin)')
+parser.add_argument('text', help='file to process',
                     nargs='*',
                     type=argparse.FileType('r'), default=[sys.stdin])
 parser.add_argument('-l', help='display number of lines', action="store_true")
@@ -27,17 +27,17 @@ if True not in (args.l, args.w, args.c):
 
 total = []
 
-for inp in args.inp:
+for text in args.text:
     stats = [0] * len(counters)
-    data = inp.readlines()
+    data = text.readlines()
     for line in data:
         for n, func in enumerate(counters):
             stats[n] += func(line)
     total.append(stats)
-    if inp.name == '<stdin>':
+    if text.name == '<stdin>':
         sys.stdout.write('\t' + '\t'.join(list(map(str, stats))) + '\n')
     else:
-        sys.stdout.write('\t' + '\t'.join(list(map(str, stats))) + f' {inp.name}\n')
+        sys.stdout.write('\t' + '\t'.join(list(map(str, stats))) + f' {text.name}\n')
 
 if len(total) > 1:
     total_stats_lst = list(zip(*total))
