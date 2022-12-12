@@ -1,7 +1,7 @@
 # Bash utilities written on python
 
 
-## Contents
+## Contents and guideline
 
 ### install.py 
 Script to install all scripts from **scripts directory** into your environment
@@ -10,14 +10,23 @@ It will allow you to execute scripts without specifying path:
 ```commandline
 wc.py -l file.txt
 ```
-To do that run the **install.py** in current direction and follow the instructions:
+To do that run the **install.py** in current direction and follow the instructions 
+(choose in directory for installation in the suggested list):
 ```commandline
 cd terminal_utilities
 ./install.py 
 ```
+#### Recomendtions for installation [!]
+
+Install scripts into new created virtual environment (usually it first in the suggested list)
+Installation into root directories (such as _usr/bin_, _usr/local/bin_) **IS NOT RECOMMENDED**
 
 ### scripts 
-Directory contains all scripts:
+
+Directory contains all scripts.
+
+#### Usage:
+
 - **ls.py** [-a] [_directory_]   
 Displays list of contents of _directory_. If _directory_ is not specified, displays contents of current directory
 If _-a_ flag specified, displays all files including hidden ones. 
@@ -49,7 +58,16 @@ cat file | wc.py
 ```
 
 ### screenshots_of_comparisons  
-Directory contains screenshots where displayed work of bash utilities and their python analogs.
+Directory contains screenshots where displayed work of bash utilities and their python analogs.  
+Here you can see examples of scripts usage. 
 
 ### files_for_testing  
-Files which  were used for testing (they were displayed on screenshots)
+Files which were used for testing (they were displayed on screenshots)
+
+## Scripts do not execute?
+
+Try to make them executable by running following command in terminal in current directory:
+```commandline
+chmod a+x ./scripts/*.py
+chomd a+x install.py
+```
