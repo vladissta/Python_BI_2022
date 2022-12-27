@@ -18,4 +18,7 @@ if args.r:
         shutil.rmtree(path)
 else:
     for path in args.path:
+        if os.path.isdir(path):
+            sys.stderr.write(f'Is a directory: {path}.\nUse rm -r to remove directories\n')
+            sys.exit(1)
         os.remove(path)

@@ -21,7 +21,7 @@ if args.l:
 if args.w:
     counters.append(lambda x: len(x.split()))
 if args.c:
-    counters.append(lambda x: len(x))
+    counters.append(lambda x: os.path.getsize(x))
 if True not in (args.l, args.w, args.c):
     counters = [lambda x: 1, lambda x: len(x.split()), lambda x: len(x.encode('utf-8'))]
 

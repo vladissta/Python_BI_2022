@@ -15,6 +15,10 @@ args = parser.parse_args()
 several_output = len(args.path) > 1
 
 for path in args.path:
+    if not os.path.isdir(path):
+        sys.stderr.write(f'Is not a directory: {path}\n')
+        sys.exit(1)
+
     if args.a:
         sys.stdout.write(f'{path}:\n' * several_output)
         sys.stdout.write('\n'.join([os.curdir, os.pardir] +
