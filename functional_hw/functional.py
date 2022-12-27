@@ -17,9 +17,9 @@ def sequential_map(*args):
     *functions, values = args
 
     for fun in functions:
-        values = list(map(fun, values))
+        values = map(fun, values)
 
-    return values
+    return list(values)
 
 
 def consensus_filter(*args):
@@ -38,9 +38,9 @@ def consensus_filter(*args):
     *functions, values = args
 
     for fun in functions:
-        values = list(filter(fun, values))
+        values = filter(fun, values)
 
-    return values
+    return list(values)
 
 
 def conditional_reduce(conditional_fun, apply_fun, values):
@@ -146,7 +146,7 @@ def multiple_partial(*functions, **params):
     return list_of_functions
 
 
-def super_print(*args, sep=' ', end='\n', file=None):
+def super_print(*args, sep=' ', end='\n', file=sys.stdout):
     """
     [The FULL COPY of base print function]
 
@@ -159,12 +159,14 @@ def super_print(*args, sep=' ', end='\n', file=None):
     :return: None
     """
 
-    text = (list(map(str, args)))
+    text = map(str, args)
     stdout = sep.join(text) + end
 
-    if file:
-        sys.stdout = open(file, 'w')
-    sys.stdout.write(stdout)
+    if file != sys.stdout:
+        file_to_write = open(file, 'w')
+        file_to_write.write(stdout)
+    else:
+        sys.stdout.write(stdout)
 
 
 if __name__ == '__main__':
