@@ -5,6 +5,8 @@ rank_dict = {'2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6,
              '8': 7, '9': 8, '10': 9, 'Jack': 10, 'Queen': 11,
              'King': 12, 'Ace': 13}
 
+reverse_dict = {v: k for k, v in rank_dict.items()}
+
 
 def player_ranks_suits(player_cards):
     player_ranks = []
@@ -49,38 +51,48 @@ def count_order(player_ranks):
 
 def combinations(cards):
     player_ranks, player_suits = player_ranks_suits(cards)
+    # print(player_ranks, player_suits)
 
     count_suits, count_ranks = count_ranks_suits(player_suits, player_ranks)
+    # print(count_suits, count_ranks)
 
-    list_of_rank_count = sorted([n[1] for n in count_ranks])
     list_of_suit_count = sorted([n[1] for n in count_suits])
+    list_of_rank_count = sorted([n[1] for n in count_ranks])
+
+    # print(list_of_suit_count, list_of_rank_count)
 
     count_straight = count_order(player_ranks)
 
     if count_straight and 5 in list_of_suit_count:
-        print('Straight Flush!')
+        print(f'Straight Flush! ({count_suits[0][0]})')
         return 51, highest_rank(count_ranks, 1)
     elif 4 in list_of_rank_count:
-        print('Four of a kind!')
-        return 21, highest_rank(count_ranks, 0)
+        hi_rank = highest_rank(count_ranks, 0)
+        print(f'Four of a {reverse_dict[hi_rank]}s!')
+        return 21, hi_rank
     elif list_of_rank_count == [2, 3]:
-        print('Full House')
+        ranks = list(set(player_ranks))
+        print(f'Full House ({reverse_dict[ranks[0]]} and {reverse_dict[ranks[1]]})!')
         return 8, highest_rank(count_ranks, 1)
     elif 5 in list_of_suit_count:
-        print('Flush!')
+        print(f'Flush! ({count_suits[0][0]})')
         return 6, highest_rank(count_ranks, 1)
     elif count_straight:
         print('Straight')
         return 5, highest_rank(count_ranks, 1)
     elif list_of_rank_count == [1, 1, 3]:
-        print('Three of a kind!')
-        return 4, highest_rank(count_ranks, 0)
+        hi_rank = highest_rank(count_ranks, 0)
+        print(f'Three of a {reverse_dict[hi_rank]}s!')
+        return 4, hi_rank
     elif list_of_rank_count == [1, 2, 2]:
-        print('Two pairs!')
+        c_ranks = list(filter(lambda x: x[1] == 2, count_ranks))
+        ranks = list(map(lambda x: x[0], c_ranks))
+        print(f'Two pairs of {reverse_dict[ranks[0]]} and {reverse_dict[ranks[1]]}!')
         return 3, highest_rank(count_ranks, 0)
     elif list_of_rank_count == [1, 1, 1, 2]:
-        print('Pair!')
-        return 2, highest_rank(count_ranks, 0)
+        hi_rank = highest_rank(count_ranks, 0)
+        print(f'Pair of {reverse_dict[hi_rank]}s!')
+        return 2, hi_rank
     elif {12, 13}.issubset(set(player_ranks)):
         print('Ace and King!')
         ranks = list(filter(lambda x: x[0] < 12, count_ranks))
@@ -98,10 +110,10 @@ if __name__ == '__main__':
 
     # player_cards = random.sample(all_cards, 5)
     # player_cards = [('2', 'hearts'), ('4', 'hearts'), ('Ace', 'hearts'), ('3', 'clubs'), ('5', 'spades')]
-    # player_cards = [('2', 'hearts'), ('4', 'hearts'), ('6', 'hearts'), ('3', 'hearts'), ('5', 'hearts')]
-    # player_cards = [('King', 'hearts'), ('Ace', 'diamonds'), ('2', 'spades'), ('8', 'hearts'), ('7', 'spades')]
+    # player_cards = [('2', 'hearts'), ('4', 'hearts'), ('3', 'hearts'), ('3', 'hearts'), ('5', 'hearts')]
+    player_cards = [('King', 'hearts'), ('King', 'diamonds'), ('6', 'spades'), ('6', 'hearts'), ('3', 'spades')]
 
     # print(combinations(player_cards))
 
-    print(player_cards)
+    # print(player_cards)
     print(combinations(player_cards))
