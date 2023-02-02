@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import random
 import itertools
 import algorythm
@@ -28,8 +30,12 @@ def replace(player, deck):
             player.cards[num - 1] = new_cards[i]
 
         print()
-        player.show_cards()
         return True
+
+
+def close_bet(player):
+    print(f'You closed your bet by paying {player.bet * 2}')
+    player.money -= player.bet * 2
 
 
 def play_pass():
@@ -54,14 +60,14 @@ def win(player, player_combination):
     else:
         coefficient = player_combination[0]
 
-    print(f'You won {player.bet * (coefficient - 1)}')
-    player.money += player.bet * coefficient
+    print(f'You won {player.bet * ((coefficient - 1) * 2 + 1)}')
+    player.money += player.bet * 2 * coefficient + player.bet * 2
     print(f'Your money: {player}')
 
 
 def no_game(player):
     print(f'You won {player.bet}')
-    player.money += player.bet * 2
+    player.money += player.bet * 4
     print(f'Your money: {player}')
 
 
@@ -72,7 +78,7 @@ def lose(player):
 
 def draw(player):
     print('Draw! You take your bet')
-    player.money += player.bet
+    player.money += player.bet * 3
     print(f'Your money: {player}')
 
 
@@ -103,6 +109,7 @@ class Cardhoder:
         print(f'Cards of {self.name}:')
         for n, card in enumerate(self.cards):
             print(f'{n + 1}) {card[0]} {card[1]}')
+        print()
 
 
 class Player(Cardhoder):
@@ -132,7 +139,8 @@ if __name__ == '__main__':
 
     player = Player(int(input('Enter your money: ')), input('Enter your name: '))
     croupier = Croupier()
-    print(f'Hello, {player.name}')
+    print()
+    print(f'Hello, {player.name}\n')
 
     while True:
         deck = Deck()
@@ -147,8 +155,6 @@ if __name__ == '__main__':
 
         player.show_cards()
 
-        print()
-
         if not play_pass():
             if play_again():
                 continue
@@ -158,8 +164,6 @@ if __name__ == '__main__':
 
         is_replaced = replace(player, deck)
 
-        print()
-
         if is_replaced:
             player.show_cards()
             if not play_pass():
@@ -167,11 +171,11 @@ if __name__ == '__main__':
                     continue
                 else:
                     break
-            print()
+
+        close_bet(player)
+        print()
 
         croupier.show_cards()
-
-        print()
 
         print('Croupier: ')
         croupier_combination = algorythm.combinations(croupier.cards)

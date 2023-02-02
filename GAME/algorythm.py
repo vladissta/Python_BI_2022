@@ -51,15 +51,11 @@ def count_order(player_ranks):
 
 def combinations(cards):
     player_ranks, player_suits = player_ranks_suits(cards)
-    # print(player_ranks, player_suits)
 
     count_suits, count_ranks = count_ranks_suits(player_suits, player_ranks)
-    # print(count_suits, count_ranks)
 
     list_of_suit_count = sorted([n[1] for n in count_suits])
     list_of_rank_count = sorted([n[1] for n in count_ranks])
-
-    # print(list_of_suit_count, list_of_rank_count)
 
     count_straight = count_order(player_ranks)
 
@@ -72,7 +68,7 @@ def combinations(cards):
         return 21, hi_rank
     elif list_of_rank_count == [2, 3]:
         ranks = list(set(player_ranks))
-        print(f'Full House ({reverse_dict[ranks[0]]} and {reverse_dict[ranks[1]]})!')
+        print(f'Full House ({reverse_dict[ranks[0]]}s and {reverse_dict[ranks[1]]}s)!')
         return 8, highest_rank(count_ranks, 1)
     elif 5 in list_of_suit_count:
         print(f'Flush! ({count_suits[0][0]})')
@@ -87,7 +83,7 @@ def combinations(cards):
     elif list_of_rank_count == [1, 2, 2]:
         c_ranks = list(filter(lambda x: x[1] == 2, count_ranks))
         ranks = list(map(lambda x: x[0], c_ranks))
-        print(f'Two pairs of {reverse_dict[ranks[0]]} and {reverse_dict[ranks[1]]}!')
+        print(f'Two pairs of {reverse_dict[ranks[0]]}s and {reverse_dict[ranks[1]]}s!')
         return 3, highest_rank(count_ranks, 0)
     elif list_of_rank_count == [1, 1, 1, 2]:
         hi_rank = highest_rank(count_ranks, 0)
@@ -108,12 +104,6 @@ if __name__ == '__main__':
 
     all_cards = list(itertools.product(vals, suits))
 
-    # player_cards = random.sample(all_cards, 5)
-    # player_cards = [('2', 'hearts'), ('4', 'hearts'), ('Ace', 'hearts'), ('3', 'clubs'), ('5', 'spades')]
-    # player_cards = [('2', 'hearts'), ('4', 'hearts'), ('3', 'hearts'), ('3', 'hearts'), ('5', 'hearts')]
-    player_cards = [('King', 'hearts'), ('King', 'diamonds'), ('6', 'spades'), ('6', 'hearts'), ('3', 'spades')]
+    player_cards = random.sample(all_cards, 5)
 
-    # print(combinations(player_cards))
-
-    # print(player_cards)
     print(combinations(player_cards))
