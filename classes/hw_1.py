@@ -39,6 +39,7 @@ Original file is located at
 
 from datetime import datetime, timedelta, date
 
+
 class Chat:
     def __init__(self, chat_history=[]):
         self.chat_history = chat_history
@@ -47,7 +48,6 @@ class Chat:
         print(self.chat_history[0])
 
     def get_history_from_time_period(self, datetime_start, datetime_end):
-        
         datetime_1 = datetime.strptime(datetime_start, "%H:%M %d-%m-%Y")
         datetime_2 = datetime.strptime(datetime_end, "%H:%M %d-%m-%Y")
 
@@ -74,22 +74,23 @@ class Message:
 
     def show(self):
         print(self.user.show_name() + ' ' + str(self.datetime) + '\n' + str(self.text))
-    
+
     def send(self, chat):
         self.datetime = datetime.now().strftime("%H:%M %d-%m-%Y")
         chat.recieve(self)
 
 
 class User:
-    
+
     def __init__(self, username, ispremium=False):
         self.username = username
         self.ispremium = ispremium
-    
+
     def show_name(self):
         if self.ispremium:
             return self.username + ' [PREMIUM]'
         return self.username
+
 
 vlad = User('Vlad', True)
 chatGPT = User('ChatGPT')
@@ -113,18 +114,20 @@ chat.get_history_from_time_period('10:00 15-02-2023', '10:20 15-02-2023').show_c
 Использовать любые модули **нельзя**, да и вряд-ли это как-то поможет)
 """
 
+
 class Args:
-    
+
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
-    
+
     def __rlshift__(self, other):
         return other(*self.args, **self.kwargs)
 
+
 sum << Args([1, 2])
 
-(lambda a, b, c: a**2 + b + c) << Args(1, 2, c=50)
+(lambda a, b, c: a ** 2 + b + c) << Args(1, 2, c=50)
 
 """# Задание 3 (5 баллов)
 
@@ -136,6 +139,7 @@ sum << Args([1, 2])
 
 Примеры использования ниже
 """
+
 
 class StrangeFloat(float):
 
@@ -153,6 +157,7 @@ class StrangeFloat(float):
             else:
                 raise AttributeError
 
+
 num = StrangeFloat(3.5)
 
 num.add_1
@@ -165,7 +170,7 @@ num.divide_25
 
 num.add_1.add_2.multiply_6.divide_8.subtract_9
 
-getattr(num, "add_-2.5")   # Используем getattr, так как не можем написать number.add_-2.5 - это SyntaxError
+getattr(num, "add_-2.5")  # Используем getattr, так как не можем написать number.add_-2.5 - это SyntaxError
 
 """# Задание 4 (3 балла)
 
@@ -184,11 +189,10 @@ getattr(num, "add_-2.5")   # Используем getattr, так как не м
 
 import numpy as np
 
-
 matrix = []
 for idx in range(0, 100, 10):
     matrix += [list(range(idx, idx + 10))]
-    
+
 selected_columns_indices = list(filter(lambda x: x in range(1, 5, 2), range(len(matrix))))
 selected_columns = map(lambda x: [x[col] for col in selected_columns_indices], matrix)
 
@@ -208,8 +212,9 @@ matrix = list.__call__()
 
 for idx in range(0, 100, 10).__iter__():
     matrix.__iadd__([list.__call__(range(idx, idx.__add__(10)).__iter__())])
-    
-selected_columns_indices = list.__call__(filter(lambda x: x in range(1, 5, 2).__iter__(), range(matrix.__len__()).__iter__()))
+
+selected_columns_indices = list.__call__(
+    filter(lambda x: x in range(1, 5, 2).__iter__(), range(matrix.__len__()).__iter__()))
 selected_columns = map(lambda x: list.__call__(x.__getitem__(col) for col in selected_columns_indices), matrix)
 
 arr = np.array(list.__call__(selected_columns))
@@ -271,15 +276,19 @@ class BiologicalSequence(ABC):
     def alpha_check(self):
         if not self.seq.isalpha():
             raise SyntaxError('Please check input sequence. It should not contain any numbers and spaces')
-       
+
 
 class NucleicAcidSequence(BiologicalSequence):
-    
+
     def alpha_check(self):
-         super().alpha_check()
-         if not set(self.seq.lower()).issubset({self._nucleotides}):
-                raise SyntaxError(f'Please check input sequence. It should be one of {self._nucleotides}')
-         return True
+
+        if type(self) == NucleicAcidSequence:
+            raise NotImplementedError('This method was not implemeted for this class')
+
+        super().alpha_check()
+        if not set(self.seq.lower()).issubset({self._nucleotides}):
+            raise SyntaxError(f'Please check input sequence. It should be one of {self._nucleotides}')
+        return True
 
     def complement(self):
 
@@ -288,45 +297,40 @@ class NucleicAcidSequence(BiologicalSequence):
 
         str_for_dict = self._nucleotides.lower() + self._nucleotides.upper()
         _str_compl_dict = self._nucleotides[1] + self._nucleotides[0] + \
-                        self._nucleotides[3] + self._nucleotides[2] 
+                          self._nucleotides[3] + self._nucleotides[2]
         str_compl_dict = _str_compl_dict.lower() + _str_compl_dict.upper()
 
         dict_compl = str.maketrans(str_for_dict, str_compl_dict)
         return self.seq.translate(dict_compl)
 
-    
     def gc_content(self):
-        return (self.seq.lower().count('g') + 
+        return (self.seq.lower().count('g') +
                 self.seq.lower().count('c')) / len(self)
 
 
-
 class DNASequence(NucleicAcidSequence):
-    
     _nucleotides = 'ATGC'
-        
+
     def transcribe(self):
         dict_transcr = str.maketrans('atgcATGC', 'augcAUGC')
         return self.seq.translate(dict_transcr)
 
 
 class RNASequence(NucleicAcidSequence):
-    
     _nucleotides = 'AUGC'
 
 
 class AminoAcidSequence(BiologicalSequence):
-    
     __aa_mass = {'A': 71, 'G': 57, 'M': 131, 'S': 87,
-                'C': 103, 'H': 137, 'N': 114, 'T': 101,
-                'D': 115, 'I': 113, 'P': 97, 'V': 99,
-                'E': 129, 'K': 128, 'Q': 128, 'W': 186,
-                'F': 147, 'L': 113, 'R': 156, 'Y': 163
-                }
+                 'C': 103, 'H': 137, 'N': 114, 'T': 101,
+                 'D': 115, 'I': 113, 'P': 97, 'V': 99,
+                 'E': 129, 'K': 128, 'Q': 128, 'W': 186,
+                 'F': 147, 'L': 113, 'R': 156, 'Y': 163
+                 }
 
     def calcultae_mass(self):
-
         return sum(self.__aa_mass[x] for x in self.seq.upper()) - (len(self) - 1) * 19
+
 
 DNASequence('aAAaauuuuUgc').alpha_check()
 
@@ -338,7 +342,8 @@ NucleicAcidSequence('agagagcgcg').complement()
 
 """### Insulin precursor sequnce"""
 
-prot = AminoAcidSequence('mskfllqshsanaclltllltlasnldislanfehscngymrphprglcgedlhviisnlcsslggnrrflakymvkrdtenvndklrgillnkkeafsyltkreasgsitceccfnqcrifelaqycrlpdhffsrisrtgrsnsghaqlednfs')
+prot = AminoAcidSequence(
+    'mskfllqshsanaclltllltlasnldislanfehscngymrphprglcgedlhviisnlcsslggnrrflakymvkrdtenvndklrgillnkkeafsyltkreasgsitceccfnqcrifelaqycrlpdhffsrisrtgrsnsghaqlednfs')
 
 prot.calcultae_mass()
 
