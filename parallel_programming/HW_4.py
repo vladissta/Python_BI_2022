@@ -48,7 +48,7 @@ from concurrent.futures import ThreadPoolExecutor
 class RandomForestClassifierCustom(BaseEstimator):
     
     def __init__(self, n_estimators: int = 10, max_depth: int = None, 
-                 max_features: int = None, random_state: int = 42):
+                 max_features: int = None, random_state: int = 42) -> None:
         
         self.n_estimators = n_estimators
         self.max_depth = max_depth
@@ -58,11 +58,11 @@ class RandomForestClassifierCustom(BaseEstimator):
         self.trees = []
         self.feat_ids_by_tree = []
 
-    def fit(self, X: np.ndarray, y: np.ndarray, n_jobs: int = 1):
+    def fit(self, X: np.ndarray, y: np.ndarray, n_jobs: int = 1) -> None:
         
         self.classes_ = sorted(np.unique(y))
         
-        def one_thread_fit(self, X: np.ndarray, y: np.ndarray):
+        def one_thread_fit(self, X: np.ndarray, y: np.ndarray) -> None:
                 
                 np.random.seed(self.random_state)
                 
@@ -96,11 +96,11 @@ class RandomForestClassifierCustom(BaseEstimator):
         return self
         
         
-    def predict_proba(self, X: np.ndarray, n_jobs: int = 1):
+    def predict_proba(self, X: np.ndarray, n_jobs: int = 1) -> np.ndarray[float]:
         
         probs = []
         
-        def one_thread_predict_proba(self, X: np.ndarray, i: int):
+        def one_thread_predict_proba(self, X: np.ndarray, i: int) -> None:
             probs.append(self.trees[i].predict_proba(X[:,self.feat_ids_by_tree[i]]))
         
             
@@ -113,7 +113,7 @@ class RandomForestClassifierCustom(BaseEstimator):
         
         return(np.mean(probs, axis=0))
     
-    def predict(self, X: np.ndarray, n_jobs: int = 1):
+    def predict(self, X: np.ndarray, n_jobs: int = 1) -> np.ndarray[int]:
         
         probas = self.predict_proba(X, n_jobs=n_jobs)
         predictions = np.argmax(probas, axis=1)
@@ -209,16 +209,16 @@ for idx, s in enumerate(symbols):
     prefix[s] = 1 << (idx + 1) * 10
 
 
-# In[19]:
+# In[13]:
 
 
-def get_memory_usage():    # Показывает текущее потребление памяти процессом
+def get_memory_usage() -> int:    # Показывает текущее потребление памяти процессом
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
     return mem_info.rss
 
 
-def bytes_to_human_readable(n_bytes: int):
+def bytes_to_human_readable(n_bytes: int) -> str:
 
     for s in reversed(symbols):
         if n_bytes >= prefix[s]:
@@ -227,7 +227,7 @@ def bytes_to_human_readable(n_bytes: int):
     return f"{n_bytes}B"
 
 
-def byte_decode(size: str):
+def byte_decode(size: str) -> int:
     num, pref = float(size[:-1]), size[-1]
     if pref == 'B':
         num_bytes = num 
@@ -237,11 +237,13 @@ def byte_decode(size: str):
     return num_bytes
         
 
-def memory_limit(soft_limit: int = None, hard_limit: int = None, poll_interval: int = 1):
+def memory_limit(soft_limit: int = None, 
+                 hard_limit: int = None,
+                 poll_interval: int = 1) -> Callable:
     
-    def decorator(func: Callable):
+    def decorator(func: Callable) -> Callable:
         
-        def inner_function():
+        def inner_function() -> None:
             
             thread_func = threading.Thread(target=func)
             thread_func.start()
@@ -264,16 +266,15 @@ def memory_limit(soft_limit: int = None, hard_limit: int = None, poll_interval: 
                         
                 time.sleep(poll_interval)
                 
-        
         return inner_function
     return decorator
 
 
-# In[20]:
+# In[14]:
 
 
 @memory_limit(soft_limit="512M", hard_limit="1.5G", poll_interval=0.1)
-def memory_increment():
+def memory_increment() -> list[int]:
     """
     Функция для тестирования
     
@@ -282,13 +283,13 @@ def memory_increment():
     """
     lst = []
     for i in range(50000000):
-        if i % 500000 == 0:
-            time.sleep(0.1)
+#         if i % 50000 == 0:
+#             time.sleep(0.1)
         lst.append(i)
     return lst
 
 
-# In[21]:
+# In[15]:
 
 
 memory_increment()
